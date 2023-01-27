@@ -27,11 +27,11 @@ filename = "Log\log.txt"
 
 
 # Database info
-HOST = 'mysql.stackcp.com'
-PORT = 57664
-DATABASE = 'wamdatabase-313333cd05'
+HOST = 'mysql.gb.stackcp.com'
+PORT = 49834
+DATABASE = 'wamdatabase-3231348b0f'
 USER = "wamuser"
-PASSWORD = "bFeW2:gdI3jf"
+PASSWORD = "vhslflbjl6"
 
 
 try:
@@ -187,7 +187,7 @@ class Ui(QtWidgets.QMainWindow):
             pass
 
     def ContactUs(self): 
-        webbrowser.open('https://www.instagram.com/mkeykhan/?hl=en')
+        webbrowser.open('https://www.instagram.com/themkaykhan/?hl=en')
     
     def CheckContact(self):
         try:
