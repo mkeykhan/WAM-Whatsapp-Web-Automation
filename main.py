@@ -236,7 +236,9 @@ class Ui(QtWidgets.QMainWindow):
             
     def SendText(self):
         options = webdriver.ChromeOptions()
-        options.add_argument(CHROME_PROFILE_PATH)
+        options.add_argument('--profile-directory=Default')
+        options.add_argument('--user-data-dir=C:/Temp/ChromeProfile')
+        # options.add_argument(CHROME_PROFILE_PATH)
         excel_data = pandas.read_excel(path, sheet_name='Recipients')
         count = 0
         send = 0
@@ -263,7 +265,7 @@ class Ui(QtWidgets.QMainWindow):
                         
                         try:
                             click_btn = WebDriverWait(driver, self.spinBox.value()).until(
-                                EC.element_to_be_clickable((By.CLASS_NAME, '_4sWnG')))
+                                EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
                         except Exception as e:
                             try:
                                 driver.find_element(By.XPATH, '//div[@class="_26aja _1dEQH"]')
@@ -275,7 +277,7 @@ class Ui(QtWidgets.QMainWindow):
                                 self.notsent.setText(str(notsent))
                             else:
                                 click_btn = WebDriverWait(driver, 10).until(
-                                EC.element_to_be_clickable((By.CLASS_NAME, '_4sWnG')))
+                                EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
                                 pass
                                 
                         else:
@@ -304,7 +306,7 @@ class Ui(QtWidgets.QMainWindow):
                             
                             try:
                                 click_btn = WebDriverWait(driver, self.spinBox.value()).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, '_4sWnG')))
+                                    EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
                             except Exception as e:
                                 try:
                                     driver.find_element(By.XPATH, '//div[@class="_26aja _1dEQH"]')
@@ -317,7 +319,7 @@ class Ui(QtWidgets.QMainWindow):
                                     count1.remove(x)
                                 else:
                                     click_btn = WebDriverWait(driver, 10).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, '_4sWnG')))
+                                    EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
                                     pass
                                     
                             else:
@@ -340,12 +342,14 @@ class Ui(QtWidgets.QMainWindow):
     
     def SendImage(self):
         if len(self.textedit.toPlainText())>=1:
-            setclass="_4sWnG"
+            setclass="_1Ae7k"
         else:
             setclass="_3HQNh"
         
         options = webdriver.ChromeOptions()
-        options.add_argument(CHROME_PROFILE_PATH)
+        options.add_argument('--profile-directory=Default')
+        options.add_argument('--user-data-dir=C:/Temp/ChromeProfile')
+        # options.add_argument(CHROME_PROFILE_PATH)
         excel_data = pandas.read_excel(path, sheet_name='Recipients')
         count = 0
         send = 0
