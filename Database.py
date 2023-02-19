@@ -2,10 +2,10 @@ import mysql.connector as mysql
 
 # Database info
 HOST = 'mysql.gb.stackcp.com'
-PORT = 56073
+PORT = 49858
 DATABASE = 'thewamdb-3231341eb7'
 USER = "wamuser"
-PASSWORD = "€`No;Y!spqVb"
+PASSWORD = "Khan.1234"
 
 try:
     db_connection = mysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db=DATABASE)

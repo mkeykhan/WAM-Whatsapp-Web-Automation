@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QVBoxLayout, QFileDialog, QTextEdit, QLabel, QSpinBox, QComboBox, QTableWidget
 from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QTextCursor
 from time import sleep
 import pandas
 import webbrowser
@@ -28,10 +29,10 @@ filename = "Log\log.txt"
 
 # Database info
 HOST = 'mysql.gb.stackcp.com'
-PORT = 56073
+PORT = 49858
 DATABASE = 'thewamdb-3231341eb7'
 USER = "wamuser"
-PASSWORD = "€`No;Y!spqVb"
+PASSWORD = "Khan.1234"
 
 try:
     db_connection = mysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db=DATABASE)
@@ -67,8 +68,9 @@ class Ui(QtWidgets.QMainWindow):
         ComboText=str(self.comboBox.currentText())
         
         self.textedit = self.findChild(QTextEdit, "textEdit")
+        self.textedit.installEventFilter(self)
         self.spinBox = self.findChild(QSpinBox, "spinBox")
-        self.spinBox.setValue(10)
+        self.spinBox.setValue(0)
         
         self.warn = self.findChild(QLabel, "warn")
 
@@ -185,6 +187,16 @@ class Ui(QtWidgets.QMainWindow):
         else:
             pass
 
+    def eventFilter(self, obj, event):
+        # set the cursor position to 0
+        cursor = QTextCursor(self.textedit.document())
+        # set the cursor position (defaults to 0 so this is redundant)
+        cursor.setPosition(0)
+        if event.type() == QtCore.QEvent.KeyPress and obj is self.textedit:
+            if event.key() == QtCore.Qt.Key_Alt and self.textedit.hasFocus():
+                self.textedit.insertPlainText('%0a')
+        return super().eventFilter(obj, event)
+
     def ContactUs(self): 
         webbrowser.open('https://www.instagram.com/themkaykhan/?hl=en')
     
@@ -236,7 +248,7 @@ class Ui(QtWidgets.QMainWindow):
     def SendText(self):
         options = webdriver.ChromeOptions()
         options.add_argument('--profile-directory=Default')
-        options.add_argument('--user-data-dir=C:/Temp/ChromeProfile')
+        options.add_argument('--user-data-dir=C:/Temp/ChromeProfile/wam')
         # options.add_argument(CHROME_PROFILE_PATH)
         excel_data = pandas.read_excel(path, sheet_name='Recipients')
         count = 0
@@ -263,20 +275,22 @@ class Ui(QtWidgets.QMainWindow):
                         driver.get(url)
                         
                         try:
-                            click_btn = WebDriverWait(driver, self.spinBox.value()).until(
-                                EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
+                            # click_btn = WebDriverWait(driver, self.spinBox.value()).until(
+                            click_btn = WebDriverWait(driver, 10).until(
+                                EC.element_to_be_clickable((By.CLASS_NAME, '_3XKXx')))
                         except Exception as e:
                             try:
                                 driver.find_element(By.XPATH, '//div[@class="_26aja _1dEQH"]')
                             except:
-                                driver.find_element(By.XPATH, '//div[@class="_20C5O _2Zdgs"]').click()
+                                popup_btn=driver.find_element(By.XPATH, '//div[@class="_1M6AF _3QJHf"]')
+                                popup_btn.click()
                                 print('Sorry, Messege could not sent to: ' +'0'+ str(excel_data['Contact'][count]), file = log)
                                 self.tableWidget.setItem(count, 1, QtWidgets.QTableWidgetItem("Not Sent"))
                                 notsent = notsent + 1
                                 self.notsent.setText(str(notsent))
                             else:
                                 click_btn = WebDriverWait(driver, 10).until(
-                                EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
+                                EC.element_to_be_clickable((By.CLASS_NAME, '_3XKXx')))
                                 pass
                                 
                         else:
@@ -287,6 +301,7 @@ class Ui(QtWidgets.QMainWindow):
                             self.tableWidget.setItem(count, 1, QtWidgets.QTableWidgetItem("Sent"))
                             send += 1
                             self.sent.setText(str(send))
+                            sleep(self.spinBox.value())
 
                         count = count + 1
                     
@@ -304,13 +319,14 @@ class Ui(QtWidgets.QMainWindow):
                             driver.get(url)
                             
                             try:
-                                click_btn = WebDriverWait(driver, self.spinBox.value()).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
+                                click_btn = WebDriverWait(driver, 10).until(
+                                    EC.element_to_be_clickable((By.CLASS_NAME, '_3XKXx')))
                             except Exception as e:
                                 try:
                                     driver.find_element(By.XPATH, '//div[@class="_26aja _1dEQH"]')
                                 except:
-                                    driver.find_element(By.XPATH, '//div[@class="_20C5O _2Zdgs"]').click()
+                                    popup_btn=driver.find_element(By.XPATH, '//div[@class="_1M6AF _3QJHf"]')
+                                    popup_btn.click()
                                     print('Sorry, Messege could not sent to: ' +'0'+ str(excel_data['Contact'][x]), file = log)
                                     self.tableWidget.setItem(x, 1, QtWidgets.QTableWidgetItem("Not Sent"))
                                     notsent = notsent + 1
@@ -318,7 +334,7 @@ class Ui(QtWidgets.QMainWindow):
                                     count1.remove(x)
                                 else:
                                     click_btn = WebDriverWait(driver, 10).until(
-                                    EC.element_to_be_clickable((By.CLASS_NAME, '_1Ae7k')))
+                                    EC.element_to_be_clickable((By.CLASS_NAME, '_3XKXx')))
                                     pass
                                     
                             else:
@@ -330,6 +346,7 @@ class Ui(QtWidgets.QMainWindow):
                                 send += 1
                                 self.sent.setText(str(send))
                                 count1.remove(x)
+                                sleep(self.spinBox.value())
                         
                         except Exception as e:
                             print('Failed to send message to ' +'0'+ str(excel_data['Contact'][x]) + str(e), file = log)
@@ -341,9 +358,9 @@ class Ui(QtWidgets.QMainWindow):
     
     def SendImage(self):
         if len(self.textedit.toPlainText())>=1:
-            setclass="_1Ae7k"
+            setclass="_3XKXx"
         else:
-            setclass="_3HQNh"
+            setclass="_3wFFT"
         
         options = webdriver.ChromeOptions()
         options.add_argument('--profile-directory=Default')
@@ -375,14 +392,15 @@ class Ui(QtWidgets.QMainWindow):
                         driver.get(url)
                             
                         try:
-                            WebDriverWait(driver, self.spinBox.value()).until(
+                            WebDriverWait(driver, 25).until(
                                 EC.element_to_be_clickable((By.CLASS_NAME, setclass)))
                                 
                         except Exception as e:
                             try:
                                 driver.find_element(By.XPATH, '//div[@class="_26aja _1dEQH"]')
                             except:
-                                driver.find_element(By.XPATH, '//div[@class="_20C5O _2Zdgs"]').click()
+                                popup_btn=driver.find_element(By.XPATH, '//div[@class="_1M6AF _3QJHf"]')
+                                popup_btn.click()
                                 print('Sorry, Messege could not sent to: ' +'0'+ str(excel_data['Contact'][count]), file = log)
                                 self.tableWidget.setItem(count, 1, QtWidgets.QTableWidgetItem("Not Sent"))
                                 notsent = notsent + 1
@@ -400,7 +418,7 @@ class Ui(QtWidgets.QMainWindow):
                             
                             image_box = driver.find_element(By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]').send_keys(filepath)
                                 
-                            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_165_h'))).click()
+                            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_3wFFT'))).click()
                                 
                             sent = True
                                 
@@ -409,6 +427,7 @@ class Ui(QtWidgets.QMainWindow):
                             self.tableWidget.setItem(count, 1, QtWidgets.QTableWidgetItem("Sent"))
                             send += 1
                             self.sent.setText(str(send))
+                            sleep(self.spinBox.value())
 
                         count = count + 1
                     except Exception as e:
@@ -426,14 +445,15 @@ class Ui(QtWidgets.QMainWindow):
                             driver.get(url)
                                 
                             try:
-                                WebDriverWait(driver, self.spinBox.value()).until(
+                                WebDriverWait(driver, 25).until(
                                     EC.element_to_be_clickable((By.CLASS_NAME, setclass)))
                                     
                             except Exception as e:
                                 try:
                                     driver.find_element(By.XPATH, '//div[@class="_26aja _1dEQH"]')
                                 except:
-                                    driver.find_element(By.XPATH, '//div[@class="_20C5O _2Zdgs"]').click()
+                                    popup_btn = driver.find_element(By.XPATH, '//div[@class="_1M6AF _3QJHf"]')
+                                    popup_btn.click()
                                     print('Sorry, Messege could not sent to: ' +'0'+ str(excel_data['Contact'][x]), file = log)
                                     self.tableWidget.setItem(x, 1, QtWidgets.QTableWidgetItem("Not Sent"))
                                     notsent = notsent + 1
@@ -451,7 +471,7 @@ class Ui(QtWidgets.QMainWindow):
                                 
                                 image_box = driver.find_element(By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]').send_keys(filepath)
                                     
-                                WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_165_h'))).click()
+                                WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_3wFFT'))).click()
                                     
                                 sent = True
                                     
@@ -461,6 +481,7 @@ class Ui(QtWidgets.QMainWindow):
                                 send += 1
                                 self.sent.setText(str(send))
                                 count1.remove(x)
+                                sleep(self.spinBox.value())
 
                         except Exception as e:
                             print('Failed to send message to ' +'0'+ str(excel_data['Contact'][x]) + str(e), file = log)
@@ -469,26 +490,40 @@ class Ui(QtWidgets.QMainWindow):
             driver.quit()
             self.warn.setText(f'Session Completed')
         
+    # def SendMessege(self):
+    #     # self.CheckExpired()
+    #     if Expired==True:
+    #         self.act_label.setText("Expired")
+    #     else:
+    #         try:
+    #             path
+    #         except NameError:
+    #             self.CheckContact()
+    #         else: 
+    #             try:
+    #                 filepath
+    #             except NameError:
+    #                 self.SendText()
+    #             else:
+    #                 self.SendImage()
+
     def SendMessege(self):
-        # self.CheckExpired()
-        if Expired==True:
-            self.act_label.setText("Expired")
-        else:
+        try:
+            path
+        except NameError:
+            self.CheckContact()
+        else: 
             try:
-                path
+                filepath
             except NameError:
-                self.CheckContact()
-            else: 
-                try:
-                    filepath
-                except NameError:
-                    self.SendText()
-                else:
-                    self.SendImage()
+                self.SendText()
+            else:
+                self.SendImage()
             
     def logout(self):
-        self.CheckExpired()
-        LoginPath = 'C:\\Users\\' + username + '\\AppData\\Local\\Google\\Chrome\\User Data\\WAM'
+        # self.CheckExpired()
+        # LoginPath = 'C:\\Users\\' + username + '\\AppData\\Local\\Google\\Chrome\\User Data\\WAM'
+        LoginPath = 'C:\\Temp\\ChromeProfile\\wam'
         try:
             shutil.rmtree(LoginPath)
         
